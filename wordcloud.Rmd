@@ -1,0 +1,99 @@
+---
+title: "Creating Word Cloud in R and Tutorial using Istanbul Domestic Waste Data"
+author: "Ozancan Ozdemir"
+date: "24 01 2020"
+output: html_document
+---
+
+In this tutorial, I would like to introduce ```wordcloud2``` package which is used to build word cloud in R. First of all, install the library using ```install.packages ()``` function if it hasn't installed yet. Then, call the package from the CRAN using ```library()``` function.
+
+```{r,message=FALSE,warning=FALSE}
+#install.packages("wordcloud2")
+library(wordcloud2)
+```
+
+You should also consider ```webshot``` and ```htmlwidgets``` packages for rendering the output of ```wordcloud2``` in R Markdown.
+
+```{r,message=FALSE,warning=FALSE}
+#install.packages("webshot")
+#install.packages("htmlwidgets")
+library(webshot)
+library(htmlwidgets)
+#webshot::install_phantomjs()
+```
+
+
+In order to create the cloud, ```wordcloud2()``` function is used. You can arrange size of the words and shape of the cloud by using ```size``` and ```shape``` arguments.
+
+Let's start with an default example by considering demoFreq data being available at the interested package.
+
+```{r}
+head(demoFreq)
+```
+
+As seen that, the dataset for word cloud is supposed to have words and the corresponding frequencies.
+
+
+```{r}
+cloud1=wordcloud2(data=demoFreq, size=1.6)
+```
+
+```{r}
+saveWidget(cloud1,"1.html",selfcontained = F)
+webshot::webshot("1.html","1.png",vwidth = 700, vheight = 500, delay =10)
+```
+
+
+If you change shape,
+
+```{r}
+cloud2=wordcloud2(data=demoFreq, size=0.5,shape='cardioid')
+saveWidget(cloud2,"2.html",selfcontained = F)
+webshot::webshot("2.html","2.png",vwidth = 700, vheight = 500, delay =10)
+```
+
+
+If you change color and background,
+
+```{r}
+cloud3=wordcloud2(data=demoFreq, size=0.5,shape='cardioid',color = "red",backgroundColor = "yellow")
+saveWidget(cloud3,"3.html",selfcontained = F)
+webshot::webshot("3.html","3.png",vwidth = 700, vheight = 500, delay =10)
+```
+
+Let's try this package on the real dataset. For this example, I will use the dataset taken from Istanbul Municipality Open Data Portal.[http://data.ibb.gov.tr] The dataset includes the observation for the total amount of domestic waste produced by each district in Istanbul between 2004 and 2019.
+
+```{r}
+atik=read.table("atik.txt",header=T)
+head(atik)
+```
+
+```{r}
+str(atik)
+```
+
+We need change the class of Toplam column from factor to numeric in order to avoid any problems that can be occured in the creation part. 
+
+```{r}
+atik$Toplam=as.numeric(as.character(atik$Toplam))
+str(atik)
+```
+
+Then
+
+```{r}
+cloud_ist=wordcloud2(data=atik, size=0.25,minRotation = -pi/9, maxRotation = -pi/9, rotateRatio = 1)
+saveWidget(cloud_ist,"4.html",selfcontained = F)
+webshot::webshot("4.html","4.png",vwidth = 700, vheight = 500, delay =10)
+```
+
+
+```{r}
+cloud_ist1=wordcloud2(data=atik, size=0.25,shape='star',color='white',backgroundColor = 'red')
+saveWidget(cloud_ist1,"5.html",selfcontained = F)
+webshot::webshot("5.html","5.png",vwidth = 700, vheight = 500, delay =10)
+```
+
+
+
+You can download .Rmd file from my GitHub page. [http://github.com/ozancanozdemir]
